@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: nslogger
+Version: 0.1.0
+Summary: SQLite logging library for ticks and orders
+Author: Your Name
+Requires-Python: >=3.6
+Dynamic: author
+Dynamic: requires-python
+Dynamic: summary

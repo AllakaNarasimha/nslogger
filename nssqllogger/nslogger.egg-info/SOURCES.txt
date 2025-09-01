@@ -1,0 +1,14 @@
+setup.py
+test_tick_consumer.py
+nslogger/__init__.py
+nslogger/data_reader.py
+nslogger/file_util.py
+nslogger/history_data_manager.py
+nslogger/option_chain_manager.py
+nslogger/sql_manager.py
+nslogger/sql_script.py
+nslogger/tick_manager.py
+nslogger.egg-info/PKG-INFO
+nslogger.egg-info/SOURCES.txt
+nslogger.egg-info/dependency_links.txt
+nslogger.egg-info/top_level.txt
