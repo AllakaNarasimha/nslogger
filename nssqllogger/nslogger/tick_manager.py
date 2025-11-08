@@ -1,12 +1,12 @@
 import os
 from datetime import datetime
-from .sql_manager import SQLManager
+from nslogger.sql_manager import SQLManager
 
 class TickManager:    
     def __init__(self, table='stock_ticks', db_file="ticks.db"):    
         self.table = table    
         self.create_db_file(db_file)
-        self.sql = SQLManager(self.db_file)
+        self.sql = SQLManager(False, self.db_file)
 
     def create_db_file(self, db_file):
         now = datetime.now()
@@ -20,7 +20,7 @@ class TickManager:
         self.sql.insert_data(tick, self.table)
 
     def get_all_ticks(self):
-        return self.sql.get_data(table=self.table)
+        return self.sql.get_data(self.table)
 
     def get_ticks_by_symbol(self, symbol):
-        return self.sql.get_data(symbol, table=self.table)
+        return self.sql.get_data(symbol, self.table)

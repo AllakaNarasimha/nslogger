@@ -181,6 +181,8 @@ CREATE TABLE IF NOT EXISTS stock_ticks (
     avg_trade_price REAL,
     low_price REAL,
     high_price REAL,
+    lower_ckt REAL,
+    upper_ckt REAL,
     open_price REAL,
     prev_close_price REAL,
     type TEXT,
@@ -191,7 +193,7 @@ CREATE TABLE IF NOT EXISTS stock_ticks (
     UNIQUE (
         ltp, vol_traded_today, last_traded_time, exch_feed_time, bid_size, ask_size,
         bid_price, ask_price, last_traded_qty, tot_buy_qty, tot_sell_qty, avg_trade_price,
-        low_price, high_price, open_price, prev_close_price, type, symbol, ch, chp
+        low_price, high_price, lower_ckt, upper_ckt, open_price, prev_close_price, type, symbol, ch, chp
     )
 )
 """

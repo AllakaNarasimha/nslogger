@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from .sql_manager import SQLManager
+from nslogger.sql_manager import SQLManager
 
 class OptionChainManager:    
     def __init__(self, db_file="options.db"):
