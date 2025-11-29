@@ -1,6 +1,6 @@
 import sqlite3
-from datetime import datetime
-from sql_script import CREATE_INDIAVIXDATA_TABLE, CREATE_METADATA_TABLE, CREATE_OPTIONCHAINS_TABLE, CREATE_DATA_DEPTH_TICKS_TABLE, CREATE_EXPIRY_DATES_TABLE, CREATE_STOCK_TICKS_TABLE, CREATE_INDEX_TICKS_TABLE
+from datetime import datetime, timezone
+from .sql_script import CREATE_INDIAVIXDATA_TABLE, CREATE_METADATA_TABLE, CREATE_OPTIONCHAINS_TABLE, CREATE_DATA_DEPTH_TICKS_TABLE, CREATE_EXPIRY_DATES_TABLE, CREATE_STOCK_TICKS_TABLE, CREATE_INDEX_TICKS_TABLE
 
 class SQLManager:
     def __init__(self, skip_db_creation=False, db_path="ticks.db"):
@@ -26,12 +26,16 @@ class SQLManager:
             self.cursor.execute(create_sql)
         self.conn.commit()    
     
-    def insert_data(self, index_tick: dict, table='stock_ticks'):
-        index_tick['created_at'] = datetime.now().isoformat()
-        columns = ','.join(index_tick.keys())
-        placeholders = ','.join(['?'] * len(index_tick))
+    def insert_data(self, index_tick: dict, table='stock_ticks', exclude_columns=None):
+        if exclude_columns is None:
+            exclude_columns = {'created_at'}
+        # Get current time in UTC
+        index_tick['created_at'] = datetime.now(timezone.utc).isoformat()
+        filtered_items = {k: v for k, v in index_tick.items() if k not in exclude_columns}
+        columns = ','.join(filtered_items.keys())
+        placeholders = ','.join(['?'] * len(filtered_items))
         sql = f'INSERT OR IGNORE INTO {table} ({columns}) VALUES ({placeholders})'
-        self.cursor.execute(sql, tuple(index_tick.values()))
+        self.cursor.execute(sql, tuple(filtered_items.values()))
         self.conn.commit()
 
     def get_data(self, symbol=None, table='stock_ticks'):

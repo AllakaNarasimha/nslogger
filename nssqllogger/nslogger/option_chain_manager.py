@@ -1,11 +1,14 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from .sql_manager import SQLManager
 
 class OptionChainManager:    
     def __init__(self, db_file="options.db"):
         self.create_db_file(db_file)
-        self.sql = SQLManager(self.db_file)
+        skip_db_creation = False
+        if os.path.exists(self.db_file):
+            skip_db_creation = True
+        self.sql = SQLManager(skip_db_creation, self.db_file)
 
     def create_db_file(self, db_file):
         now = datetime.now()
@@ -16,6 +19,9 @@ class OptionChainManager:
         self.db_file = os.path.join(dir_path, f"{today_str}_{db_file}")
 
     def log_option_chain(self, oi: dict):
+        # Generate a single timestamp for all inserts
+        common_timestamp = datetime.now(timezone.utc).isoformat()
+
         expiry_data = oi.get('expiryData', [])
         indiavix = oi.get('indiavixData', {})
         options = oi.get('optionsChain', [])
@@ -23,26 +29,32 @@ class OptionChainManager:
         # Insert expiry data (list of dicts)
         if isinstance(expiry_data, list):
             for item in expiry_data:
+                item['created_at'] = common_timestamp
                 self.sql.insert_data(item, "ExpiryDates")
         elif isinstance(expiry_data, dict):
+            expiry_data['created_at'] = common_timestamp
             self.sql.insert_data(expiry_data, "ExpiryDates")
 
         # Insert indiavix data (dict)
         if isinstance(indiavix, dict):
+            indiavix['created_at'] = common_timestamp
             self.sql.insert_data(indiavix, "IndiavixData")
 
         # Insert options data (list of dicts)
         if isinstance(options, list):
             for item in options:
+                item['created_at'] = common_timestamp
                 self.sql.insert_data(item, "OptionChains")
         elif isinstance(options, dict):
+            options['created_at'] = common_timestamp
             self.sql.insert_data(options, "OptionChains")
         
         callOi = oi.get('callOi', 0)
         putOi = oi.get('putOi', 0)
         metadata = {
             "callOi": callOi,
-            "putOi": putOi
+            "putOi": putOi,
+            "created_at": common_timestamp
         }
         self.sql.insert_data(metadata, "Metadata")    
     

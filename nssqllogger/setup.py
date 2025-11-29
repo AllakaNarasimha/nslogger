@@ -2,15 +2,17 @@ from setuptools import setup, find_packages
 
 setup(
     name="nslogger",
-    version="0.1.0",
-    description="SQLite logging library for ticks and orders",
-    author="Your Name",
+    version="1.0.0",
+    description="Financial Data Logging & Management Library",
+    author="narasimharao.allaka",
     packages=find_packages(),
-    install_requires=[],
-    python_requires=">=3.6",
+    install_requires=[
+        "pandas>=1.5.0",
+        "setuptools>=65.0"
+    ],
+    python_requires=">=3.8",
     include_package_data=True,
     package_data={
         "": ["*.py"],
-    },
-    scripts=["test_tick_consumer.py"],
+    }
 )

@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS nfo_data (
     name TEXT,
     expiry TEXT,
     strike REAL,
-    instrument_type TEXT
+    instrument_type TEXT,
+    UNIQUE (date, expiry)
 )
 """
 CREATE_BFO_TABLE = """
@@ -64,7 +65,8 @@ CREATE TABLE IF NOT EXISTS ExpiryDates (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     date TEXT,
     expiry INTEGER,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (date, expiry)
 )
 """
 
@@ -83,7 +85,8 @@ CREATE TABLE IF NOT EXISTS IndiavixData (
     option_type TEXT,
     strike_price REAL,
     symbol TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (symbol, fyToken, strike_price, option_type)
 )
 """
 
@@ -110,7 +113,8 @@ CREATE TABLE IF NOT EXISTS OptionChains (
     strike_price REAL,
     symbol TEXT,
     volume INTEGER,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (symbol, fyToken, strike_price, option_type, ex_symbol)
 )
 """
 
@@ -119,7 +123,8 @@ CREATE TABLE IF NOT EXISTS Metadata (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     callOi INTEGER,
     putOi INTEGER,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (callOi, putOi)
 )
 """
 CREATE_DATA_DEPTH_TICKS_TABLE = """
@@ -181,6 +186,8 @@ CREATE TABLE IF NOT EXISTS stock_ticks (
     avg_trade_price REAL,
     low_price REAL,
     high_price REAL,
+    lower_ckt REAL,
+    upper_ckt REAL,
     open_price REAL,
     prev_close_price REAL,
     type TEXT,
@@ -189,9 +196,9 @@ CREATE TABLE IF NOT EXISTS stock_ticks (
     chp REAL,
     created_at TEXT,
     UNIQUE (
-        ltp, vol_traded_today, last_traded_time, exch_feed_time, bid_size, ask_size,
+        symbol, type, ltp, vol_traded_today, last_traded_time, exch_feed_time, bid_size, ask_size,
         bid_price, ask_price, last_traded_qty, tot_buy_qty, tot_sell_qty, avg_trade_price,
-        low_price, high_price, open_price, prev_close_price, type, symbol, ch, chp
+        low_price, high_price, lower_ckt, upper_ckt, open_price, prev_close_price, ch, chp
     )
 )
 """
