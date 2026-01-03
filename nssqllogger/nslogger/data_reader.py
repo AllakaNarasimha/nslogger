@@ -4,17 +4,17 @@ import pandas as pd
 from .file_util import FileUtil
 from .history_data_manager import HistoryDataManager
 
-class DataReader:    
-    @staticmethod
-    def get_db_filename_from_folder(source_folder, dest_folder):        
+class DataReader:   
+    def __init__(self):
+        self.data_folder = None
+        self.file_util = FileUtil()   
+
+    def get_db_filename_from_folder(self, source_folder, dest_folder):        
         folder_name = os.path.basename(os.path.normpath(source_folder))
         folder_path = os.path.join(dest_folder, folder_name)
         os.makedirs(folder_path, exist_ok=True)
         return os.path.join(folder_path, f"{folder_name}-history.db")
-
-    def __init__(self) -> None:
-        self.data_folder = None
-        self.file_util = FileUtil()          
+           
 
     def get_table_name_from_prefix(self, filename):    
         match filename:
@@ -79,7 +79,7 @@ class DataReader:
                                 'oi': values[3]
                             }
                         else:
-                            raise ValueError(f"Unexpected data format for instrument '{instrument}' at datetime '{dt}'")
+                            raise ValueError(f"Unexpected data format for instrument '{instrument}' with values '{values}'")
                         dict_data.append(d)
                 dict_df = pd.DataFrame(dict_data)
                 self.save_df(dict_df, save_file)
@@ -146,8 +146,10 @@ class DataReader:
     def generate_csv_files(self, source_folder, dest_folder):
         os.makedirs(dest_folder, exist_ok=True)        
         self.data_folder = source_folder
-        db_file = self.get_db_filename_from_folder(source_folder, dest_folder)
-        self.history_data_manager = HistoryDataManager(db_file)
+        # Extract date folder name and initialize HistoryDataManager
+        db_date = os.path.basename(os.path.normpath(source_folder))
+        # Create HistoryDataManager with date-based filename (e.g., 07dec25_history.db)
+        self.history_data_manager = HistoryDataManager("history.db")
         self.unzip_folder(source_folder)
         
         files = self.file_util.get_all_files(source_folder)
